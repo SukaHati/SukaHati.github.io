@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tasbih Online</title>
+	<style>
+	  .center {
+	    display: flex;
+		justify-content: center;
+	  }
+	  .footer {
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		color: white;
+		text-align: center;
+	  }
+	</style>
+  </head>
+  <body style="background-color:#101010;min-height:100vh;display:flex;flex-direction:column;">
+    <div style="flex-grow: 1;">
+      <div class="center" style="" id="div_pic">
+	    <img src="tasbih1.png"></img>
+	  </div>
+	  <div class="center">
+        <span id="currentcounter" style="color:white;font-size:32px"></span>
+        <span style="color:white;font-size:32px">/</span>
+        <span id="limitcounter" style="color:white;font-size:32px"></span>
+	  </div>
+	  <div class="center">
+	    <button id="counter_up_btn" onclick="increaseCounter()">Counter Up</button>
+	    <button id="counter_down_btn" onclick="decreaseCounter()">Counter Down</button>
+	    <button id="counter_reset_btn" onclick="resetCounter()">Reset Counter</button>
+	  </div>
+	</div>
+	<div class="footer">
+	  <p>a</p>
+	</div>
+  </body>
+</html>
+<script>
+  const wordList = {
+    word1: {
+	  pic: "tasbih1.png",
+	  counter:0,
+	  limit: 34
+	},
+	word2: {
+	  pic: "tasbih2.png",
+	  counter:0,
+	  limit:33
+	},
+	word3: {
+	  pic: "tasbih3.png",
+	  counter:0,
+	  limit:33
+	}
+  };
+  let wordCurrentNumber = 1;
+
+  setWordSet("word1");
+
+  function increaseCounter() {
+    let chosenWord = "word" + wordCurrentNumber;
+    wordList[chosenWord].counter += 1;
+	document.getElementById("currentcounter").innerHTML = wordList[chosenWord].counter;
+	if(wordList[chosenWord].counter == wordList[chosenWord].limit) {
+	  if(wordCurrentNumber < 3) {
+	    wordCurrentNumber += 1;
+		wordList[chosenWord].counter = 0;
+	  }
+	  else {
+	    wordCurrentNumber = 1
+		wordList[chosenWord].counter = 0;
+	  }
+	  chosenWord = "word" + wordCurrentNumber;
+	  setWordSet(chosenWord);
+	}
+  }
+  
+  function decreaseCounter() {
+    let chosenWord = "word" + wordCurrentNumber;
+	wordList[chosenWord].counter -= 1;
+	document.getElementById("currentcounter").innerHTML = wordList[chosenWord].counter;
+	if(wordList[chosenWord].counter < 0) {
+	  if(wordCurrentNumber <= 1) {
+	    wordCurrentNumber = 3;
+	  }
+	  else {
+	    wordCurrentNumber -= 1;
+	  }
+	  wordList[chosenWord].counter = 0;
+	  chosenWord = "word" + wordCurrentNumber;
+	  wordList[chosenWord].counter = wordList[chosenWord].limit - 1;
+	  setWordSet(chosenWord);
+	}
+  }
+  
+  function resetCounter() {
+    wordList["word1"].counter = 0;
+    wordList["word2"].counter = 0;
+    wordList["word3"].counter = 0;
+	wordCurrentNumber = 1;
+	setWordSet("word1");
+  }
+  
+  function changePic(chosenPic) {
+    let A = document.getElementById("div_pic").innerHTML;
+	let B = '<img src="' + chosenPic + '">';
+	document.getElementById("div_pic").innerHTML = B;
+  }
+  
+  function setWordSet(theWordSet) {
+    document.getElementById("currentcounter").innerHTML = wordList[theWordSet].counter;
+	document.getElementById("limitcounter").innerHTML = wordList[theWordSet].limit;
+	document.getElementById("div_pic").innerHTML = '<img src="' + wordList[theWordSet].pic + '">';
+  }
+</script>
