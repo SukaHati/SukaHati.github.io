@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang=en>
+    <head>
+        <meta charset="utf-8">
+        <title>Budget Maker</title>
+        <link rel="stylesheet" href="style.css"/>
+        <script src="app.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    </head>
+    <body>
+        <div id="navbar" class="topnav">
+            <a href="#home">Home</a>
+        </div>
+        <div id="middle_section" class="mid_div">
+            <div class="split left">
+                <canvas id="chart_1" class="chart"></canvas>
+                <div>
+                    <table id="chart_config">
+                        <tr>
+                            <th>Select time:</th>
+                            <th id="table_config_cell_option_desc_1"></th>
+                            <th id="table_config_cell_option_desc_2"></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select id="chart_mode">
+                                    <option value="day">Day</option>
+                                    <option value="week">Week</option>
+                                    <option value="month" selected>Month</option>
+                                    <option value="year">Year</option>
+                                    <option value="lifetime">Lifetime</option>
+                                </select>
+                            </td>
+                            <td id="table_config_cell_option_1"></td>
+                            <td id="table_config_cell_option_2"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <p>Summary:</p>
+                    <div style="background-color: orange;">Monthly Budget:
+                        <table style="width:90%;">
+                            <tr>
+                                <td>Income</td>
+                                <td id="sum_income" style="color:green;" align="right">0</td>
+                            </tr>
+                            <tr>
+                                <td>Expenses</td>
+                                <td id="sum_expenses" style="color:red;" align="right">0</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td id="sum_total" align="right">0</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="split right">
+                <div>
+                    <table id="table_input" style="width=100%;" align="center">
+                        <tr>
+                            <th>Item</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                        <tr id="table_row1">
+                            <td><input id="input_name1" type="text"></td>
+                            <td><input id="input_amount1" type="number" min="0"></td>
+                            <td>
+                                <select id="input_type1" name="income_or_expenses">
+                                    <option value="income">Income</option>
+                                    <option value="expenses">Expenses</option>
+                                </select>
+                            </td>
+                            <td><input id="input_date1" type="date"></td>
+                            <td id="input_remove1"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>Author: Muhammad Hasif Bin Abdul Ghani</p>
+        </footer>
+    </body>
+</html>
