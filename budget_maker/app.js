@@ -1,15 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const xValues = ["Income", "Expense"];
-    let yValues = [1, 1];
+    let yValues = [0, 0];
     const barColors = ["#00ff00", "#ff0000"];
     const bigData = [];
     let currentRowCount = 2;
     
-    
     //Setting the date
+    const daysValueMultiplier = 24 * 60 * 60 * 1000;
     const thisday = new Date();
     const thismonth = thisday.getMonth() + 1;
     const thisyear = thisday.getYear() + 1900;
+    const thisnewyear = new Date(thisyear, 0, 1);
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     document.getElementById("input_date1").valueAsDate = thisday;
@@ -49,6 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById("table_config_cell_option_desc_1").innerHTML = "Select Date:";
             document.getElementById("table_config_cell_option_1").innerHTML = var_input;
             document.getElementById("chart_date1").valueAsDate = thisday;
+            document.getElementById("chart_date1").addEventListener("change", () => {
+                edit_thechart();
+            })
         }
         else if(chart_mode == "week") {
             let var_week_input = '<td><input id="chart_week" type="week"></td>';
@@ -57,6 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const chart_week = document.getElementById("chart_week");
             chart_week.valueAsDate = thisday;
             chart_week.addEventListener("change", () => {
+                alert(chart_week.value);
+                getDateinWeek(chart_week.value);
+                edit_thechart();
             })
         }
         else if(chart_mode == "month") {
@@ -72,7 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert("The value cannot be in negative!");
                     document.getElementById("chart_year").value = thisyear;
                 }
+                edit_thechart();
             });
+            edit_thechart();
         }
         else {
             document.getElementById("table_config_cell_option_desc_1").innerHTML = "";
@@ -236,19 +245,24 @@ document.addEventListener('DOMContentLoaded', () => {
             thiscell.innerHTML = "remove";
             thiscell.classList.add("table_input_row_remove_btn");
             thiscell.addEventListener("click", function() {
-                document.getElementById(thisrow.id).remove();
-                remove_item_bigData(thisrow.id);
+                let x = thisrow.id;
+                remove_item_bigData(x);
+                document.getElementById(x).remove();
             });
         }
     }
     
     function edit_thechart() {
-        console.log(bigData);
-        let theArray = [];
+        let theArray = [0, 0];
         if(chart_mode == "day") {
             for(var keyName in bigData) {
-                if(document.getElementById("chart_date1").value == bigData[keyName].date) {
-                    console.log(bigData[keyName].date);
+                if(bigData[keyName].date == document.getElementById("chart_date1").value) {
+                    if(bigData[keyName].type == "income") {
+                        theArray[0] += parseInt(bigData[keyName].amount);
+                    }
+                    else if(bigData[keyName].type == "expenses") {
+                        theArray[1] += parseInt(bigData[keyName].amount);
+                    }
                 }
             }
         }
@@ -256,16 +270,33 @@ document.addEventListener('DOMContentLoaded', () => {
             
         }
         else if(chart_mode == "month") {
-            
+            for(var keyName in bigData) {
+                let keydate = bigData[keyName].date.split("-");
+                let month_year = keydate[0] + "-" + keydate[1];
+                console.log(month_year);
+            }
         }
         else if(chart_mode == "year") {
-            
+            for(var keyName in bigData) {
+                let theobject = bigData[keyName];
+                let keydate = theobject.date.split("-");
+                //grab the year from keydate
+                keydate = keydate[0];
+                if(keydate == document.getElementById("chart_year").value) {
+                    if(bigData[keyName].type == "income") {
+                        theArray[0] += parseInt(bigData[keyName].amount);
+                    }
+                    else if(bigData[keyName].type == "expenses") {
+                        theArray[1] += parseInt(bigData[keyName].amount);
+                    }
+                }
+            }
         }
         else if(chart_mode == "lifetime") {
             
         }
         //thechart.type = changetype;
-        //thechart.data.datasets[0].data = theArray;
+        thechart.data.datasets[0].data = theArray;
         thechart.update();
     }
     
@@ -279,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let theRowNumber = theRowSplitter[1];
         let keyname = "item_" + theRowNumber;
         delete bigData[keyname];
+        edit_thechart();
     }
     
     function remove_input_row(x) {
@@ -324,6 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
             let var_year_input = '<td><input id="chart_year" type="number" min="0"></td>';
             document.getElementById("table_config_cell_option_desc_1").innerHTML = "Select Month:";
             document.getElementById("table_config_cell_option_1").innerHTML = var_month_input;
+            document.getElementById("table_config_cell_option_1").addEventListener("change", () => {
+                edit_thechart();
+            });
         
             //years input section
             document.getElementById("table_config_cell_option_desc_2").innerHTML = "Select Year:";
@@ -334,7 +369,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert("The value cannot be in negative!");
                     document.getElementById("chart_year").value = thisyear;
                 }
+                edit_thechart();
             });
+    }
+    
+    function getDateinWeek(weekValue) {
+        let x = [0, 0];
+        let selectedWeek = weekValue.split("-W");
+        let weekAmount = selectedWeek[1] - 1;
+        let selectedYear = selectedWeek[0];
+        let weekAmountTimeStamp = weekAmount * 7 * daysValueMultiplier;
+        //I think there is mistake I make here, only apply to current year
+        let selectednewyear = new Date(selectedYear, 0, 1);
+        let selectednewyeartimestamp = selectednewyear.getTime();
+        let getWeeksAfter = selectednewyeartimestamp + weekAmountTimeStamp;
+        let newDate = new Date(getWeeksAfter);
+        //determine if this new day is Monday
+        let whatnewDate = newDate.getDay();
+        let mondayoftheweekstimestamp = 0;
+        //let me think about how to handle week for sunday
+        if(whatnewDate > 1) {
+            mondayoftheweekstimestamp = getWeeksAfter - ((whatnewDate - 1) * daysValueMultiplier);
+        }
+        else if(whatnewDate < 1) {
+            mondayoftheweekstimestamp = getWeeksAfter - 6 * daysValueMultiplier;
+        }
+        else {
+            mondayoftheweekstimestamp = getWeeksAfter;
+        }
+        let sundayoftheweekstimestamp = mondayoftheweekstimestamp + 6 * daysValueMultiplier;
+        const mondayoftheweeks = new Date(mondayoftheweekstimestamp);
+        const sundayoftheweeks = new Date(sundayoftheweekstimestamp);
+        console.log(selectednewyear);
+        console.log(newDate);
+        console.log(mondayoftheweeks);
+        console.log(sundayoftheweeks);
     }
     
 })
