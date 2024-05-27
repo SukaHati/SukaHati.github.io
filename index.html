@@ -1,117 +1,90 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Tasbih Online</title>
-	<style>
-	  .center {
-	    display: flex;
-		justify-content: center;
-	  }
-	  .footer {
-		left: 0;
-		bottom: 0;
-		width: 100%;
-		color: white;
-		text-align: center;
-	  }
-	</style>
-  </head>
-  <body style="background-color:#101010;min-height:100vh;display:flex;flex-direction:column;">
-    <div style="flex-grow: 1;">
-      <div class="center" style="" id="div_pic">
-	    <img src="tasbih3.png"></img>
-	  </div>
-	  <div class="center">
-        <span id="currentcounter" style="color:white;font-size:32px"></span>
-        <span style="color:white;font-size:32px">/</span>
-        <span id="limitcounter" style="color:white;font-size:32px"></span>
-	  </div>
-	  <div class="center">
-	    <button id="counter_up_btn" onclick="increaseCounter()">Counter Up</button>
-	    <button id="counter_down_btn" onclick="decreaseCounter()">Counter Down</button>
-	    <button id="counter_reset_btn" onclick="resetCounter()">Reset Counter</button>
-	  </div>
-	</div>
-	<div class="footer">
-	  <p>a</p>
-	</div>
-  </body>
+<html lang=en>
+    <head>
+        <meta charset="utf-8">
+        <title>Budget Maker</title>
+        <link rel="stylesheet" href="style.css"/>
+        <script src="app.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    </head>
+    <body>
+        <div id="navbar" class="topnav">
+            <a href="#home">Home</a>
+        </div>
+        <div id="middle_section" class="mid_div">
+            <div class="split left">
+                <canvas id="chart_1" class="chart"></canvas>
+                <div>
+                    <table id="chart_config">
+                        <tr>
+                            <th>Select time:</th>
+                            <th id="table_config_cell_option_desc_1"></th>
+                            <th id="table_config_cell_option_desc_2"></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select id="chart_mode">
+                                    <option value="day">Day</option>
+                                    <!--<option value="week">Week</option>-->
+                                    <option value="month" selected>Month</option>
+                                    <option value="year">Year</option>
+                                    <option value="lifetime">Lifetime</option>
+                                </select>
+                            </td>
+                            <td id="table_config_cell_option_1"></td>
+                            <td id="table_config_cell_option_2"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <p>Summary:</p>
+                    <div style="background-color: orange;">
+                        <div id="budget_timespan">Monthly Budget:</div>
+                        <table style="width:90%;">
+                            <tr>
+                                <td>Income</td>
+                                <td id="sum_income" style="color:green;" align="right">0</td>
+                            </tr>
+                            <tr>
+                                <td>Expenses</td>
+                                <td id="sum_expenses" style="color:red;" align="right">0</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td id="sum_total" align="right">0</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="split right">
+                <div>
+                    <table id="table_input" style="width=100%;" align="center">
+                        <tr>
+                            <th>Item</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                        <tr id="table_row1">
+                            <td><input id="input_name1" type="text"></td>
+                            <td><input id="input_amount1" type="number" min="0"></td>
+                            <td>
+                                <select id="input_type1" name="income_or_expenses">
+                                    <option value="income">Income</option>
+                                    <option value="expenses">Expenses</option>
+                                </select>
+                            </td>
+                            <td><input id="input_date1" type="date"></td>
+                            <td id="input_remove1"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>Author: Muhammad Hasif Bin Abdul Ghani</p>
+        </footer>
+    </body>
 </html>
-<script>
-  const wordList = {
-    word1: {
-	  pic: "tasbih3.png",
-	  counter:0,
-	  limit: 33
-	},
-	word2: {
-	  pic: "tasbih2.png",
-	  counter:0,
-	  limit:33
-	},
-	word3: {
-	  pic: "tasbih1.png",
-	  counter:0,
-	  limit:34
-	}
-  };
-  let wordCurrentNumber = 1;
-
-  setWordSet("word1");
-
-  function increaseCounter() {
-    let chosenWord = "word" + wordCurrentNumber;
-    wordList[chosenWord].counter += 1;
-	document.getElementById("currentcounter").innerHTML = wordList[chosenWord].counter;
-	if(wordList[chosenWord].counter == wordList[chosenWord].limit) {
-	  if(wordCurrentNumber < 3) {
-	    wordCurrentNumber += 1;
-		wordList[chosenWord].counter = 0;
-	  }
-	  else {
-	    wordCurrentNumber = 1
-		wordList[chosenWord].counter = 0;
-	  }
-	  chosenWord = "word" + wordCurrentNumber;
-	  setWordSet(chosenWord);
-	}
-  }
-  
-  function decreaseCounter() {
-    let chosenWord = "word" + wordCurrentNumber;
-	wordList[chosenWord].counter -= 1;
-	document.getElementById("currentcounter").innerHTML = wordList[chosenWord].counter;
-	if(wordList[chosenWord].counter < 0) {
-	  if(wordCurrentNumber <= 1) {
-	    wordCurrentNumber = 3;
-	  }
-	  else {
-	    wordCurrentNumber -= 1;
-	  }
-	  wordList[chosenWord].counter = 0;
-	  chosenWord = "word" + wordCurrentNumber;
-	  wordList[chosenWord].counter = wordList[chosenWord].limit - 1;
-	  setWordSet(chosenWord);
-	}
-  }
-  
-  function resetCounter() {
-    wordList["word1"].counter = 0;
-    wordList["word2"].counter = 0;
-    wordList["word3"].counter = 0;
-	wordCurrentNumber = 1;
-	setWordSet("word1");
-  }
-  
-  function changePic(chosenPic) {
-    let A = document.getElementById("div_pic").innerHTML;
-	let B = '<img src="' + chosenPic + '">';
-	document.getElementById("div_pic").innerHTML = B;
-  }
-  
-  function setWordSet(theWordSet) {
-    document.getElementById("currentcounter").innerHTML = wordList[theWordSet].counter;
-	document.getElementById("limitcounter").innerHTML = wordList[theWordSet].limit;
-	document.getElementById("div_pic").innerHTML = '<img src="' + wordList[theWordSet].pic + '">';
-  }
-</script>
