@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById("table_config_cell_option_2").innerHTML = "";
         if(chart_mode == "day") {
             let var_input = '<input id="chart_date1" type="date">';
+            document.getElementById("budget_timespan").innerHTML = "Daily Budget:"
             document.getElementById("table_config_cell_option_desc_1").innerHTML = "Select Date:";
             document.getElementById("table_config_cell_option_1").innerHTML = var_input;
             document.getElementById("chart_date1").valueAsDate = thisday;
@@ -57,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else if(chart_mode == "week") {
             let var_week_input = '<td><input id="chart_week" type="week"></td>';
+            document.getElementById("budget_timespan").innerHTML = "Weekly Budget:"
             document.getElementById("table_config_cell_option_desc_1").innerHTML = "Select Week:";
             document.getElementById("table_config_cell_option_1").innerHTML = var_week_input;
             const chart_week = document.getElementById("chart_week");
@@ -68,10 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
             edit_thechart();
         }
         else if(chart_mode == "month") {
+            document.getElementById("budget_timespan").innerHTML = "Monthly Budget:"
             chart_month_mode();
         }
         else if(chart_mode == "year") {
             let var_year_input = '<td><input id="chart_year" type="number" min="0"></td>';
+            document.getElementById("budget_timespan").innerHTML = "Yearly Budget:"
             document.getElementById("table_config_cell_option_desc_1").innerHTML = "Select Year:";
             document.getElementById("table_config_cell_option_1").innerHTML = var_year_input;
             document.getElementById("chart_year").value = thisyear;
@@ -85,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             edit_thechart();
         }
         else {
+            document.getElementById("budget_timespan").innerHTML = "Lifetime Budget:"
             document.getElementById("table_config_cell_option_desc_1").innerHTML = "";
             document.getElementById("table_config_cell_option_1").innerHTML = "";
         }
