@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById("chart_date1").addEventListener("change", () => {
                 edit_thechart();
             })
+            edit_thechart();
         }
         else if(chart_mode == "week") {
             let var_week_input = '<td><input id="chart_week" type="week"></td>';
@@ -61,10 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const chart_week = document.getElementById("chart_week");
             chart_week.valueAsDate = thisday;
             chart_week.addEventListener("change", () => {
-                alert(chart_week.value);
                 getDateinWeek(chart_week.value);
                 edit_thechart();
             })
+            edit_thechart();
         }
         else if(chart_mode == "month") {
             chart_month_mode();
@@ -272,8 +273,16 @@ document.addEventListener('DOMContentLoaded', () => {
         else if(chart_mode == "month") {
             for(var keyName in bigData) {
                 let keydate = bigData[keyName].date.split("-");
-                let month_year = keydate[0] + "-" + keydate[1];
-                console.log(month_year);
+                let select_chart_month = parseInt(document.getElementById("chart_month").value);
+                let select_chart_year = parseInt(document.getElementById("chart_year").value);
+                if(select_chart_month == parseInt(keydate[1]) && select_chart_year == parseInt(keydate[0])) {
+                    if(bigData[keyName].type == "income") {
+                        theArray[0] += parseInt(bigData[keyName].amount);
+                    }
+                    else if(bigData[keyName].type == "expenses") {
+                        theArray[1] += parseInt(bigData[keyName].amount);
+                    }
+                }
             }
         }
         else if(chart_mode == "year") {
@@ -293,7 +302,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         else if(chart_mode == "lifetime") {
-            
+            for(var keyName in bigData) {
+                if(bigData[keyName].type == "income") {
+                    theArray[0] += parseInt(bigData[keyName].amount);
+                }
+                else if(bigData[keyName].type == "expenses") {
+                    theArray[1] += parseInt(bigData[keyName].amount);
+                }
+            }
         }
         //thechart.type = changetype;
         thechart.data.datasets[0].data = theArray;
@@ -352,11 +368,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function chart_month_mode() {
+            console.log("active!");
             let var_month_input = create_time_selection("month");
             let var_year_input = '<td><input id="chart_year" type="number" min="0"></td>';
             document.getElementById("table_config_cell_option_desc_1").innerHTML = "Select Month:";
             document.getElementById("table_config_cell_option_1").innerHTML = var_month_input;
-            document.getElementById("table_config_cell_option_1").addEventListener("change", () => {
+            document.getElementById("chart_month").addEventListener("change", () => {
                 edit_thechart();
             });
         
@@ -371,6 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 edit_thechart();
             });
+            edit_thechart();
     }
     
     function getDateinWeek(weekValue) {
@@ -379,15 +397,28 @@ document.addEventListener('DOMContentLoaded', () => {
         let weekAmount = selectedWeek[1] - 1;
         let selectedYear = selectedWeek[0];
         let weekAmountTimeStamp = weekAmount * 7 * daysValueMultiplier;
-        //I think there is mistake I make here, only apply to current year
+        //Find new year and then find the day of the week for the year
         let selectednewyear = new Date(selectedYear, 0, 1);
         let selectednewyeartimestamp = selectednewyear.getTime();
-        let getWeeksAfter = selectednewyeartimestamp + weekAmountTimeStamp;
+        let getWeeksAfter = 0;
+        if(selectednewyear.getDay() != 1) {
+            let selectYearMondayTimeStamp = 0;
+            if(selectednewyear.getDay() == 0) {
+                selectYearMondayTimeStamp = selectednewyeartimestamp + daysValueMultiplier;
+            }
+            else {
+                selectYearMondayTimeStamp = selectednewyeartimestamp + (8 - selectednewyear.getDay()) * daysValueMultiplier;
+            }
+            getWeeksAfter = selectYearMondayTimeStamp + weekAmountTimeStamp;
+        }
+        else {
+            getWeeksAfter = selectednewyeartimestamp + weekAmountTimeStamp;
+        }
+        //find Monday end
         let newDate = new Date(getWeeksAfter);
         //determine if this new day is Monday
         let whatnewDate = newDate.getDay();
         let mondayoftheweekstimestamp = 0;
-        //let me think about how to handle week for sunday
         if(whatnewDate > 1) {
             mondayoftheweekstimestamp = getWeeksAfter - ((whatnewDate - 1) * daysValueMultiplier);
         }
@@ -400,10 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let sundayoftheweekstimestamp = mondayoftheweekstimestamp + 6 * daysValueMultiplier;
         const mondayoftheweeks = new Date(mondayoftheweekstimestamp);
         const sundayoftheweeks = new Date(sundayoftheweekstimestamp);
-        console.log(selectednewyear);
-        console.log(newDate);
-        console.log(mondayoftheweeks);
-        console.log(sundayoftheweeks);
+        //return [mondayoftheweeks, sundayoftheweeks];
     }
     
 })
